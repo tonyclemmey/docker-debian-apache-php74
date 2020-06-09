@@ -6,7 +6,6 @@ volumes:
   craftcms-logs: null
 services:
   web:
-    # image: 'tonyclemmey/craftcms-docker:craft2'
     build: .
     ports:
       - '80:80'
@@ -22,17 +21,17 @@ services:
       REDIS_HOST: redis
       REDIS_PORT_6379_TCP: 'tcp://redis:6379'
       DB_HOST: mariadb
-      DB_NAME: craft
+      DB_NAME: example
       DB_PORT: 3306
-      DB_USER: craft
-      DB_PASS: secret
+      DB_USER: user
+      DB_PASS: password
   mariadb:
     image: 'mariadb:10.4.12'
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_USER: craft
-      MYSQL_PASSWORD: secret
-      MYSQL_DATABASE: craft
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: example
     volumes:
       - 'mariadb-data:/var/lib/mysql/data'
   redis:
