@@ -25,7 +25,7 @@ ENV DOMAIN_URL $URL
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
 
 # Install some stuff (ffmpeg, apache mods, php exts)
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && \
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils ffmpeg && \
     a2enmod ssl && a2enmod rewrite && a2enmod headers && \
     install-php-extensions gd imagick intl mcrypt pdo_mysql redis zip && \
     apt-get clean && apt-get autoclean && apt-get autoremove --purge && \
