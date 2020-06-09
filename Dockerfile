@@ -27,7 +27,7 @@ COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr
 # Install some stuff (ffmpeg, apache mods, php exts)
 RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && \
     a2enmod ssl && a2enmod rewrite && a2enmod headers && \
-    install-php-extensions gd imagick intl mcrypt pdo_mysql redis && \
+    install-php-extensions gd imagick intl mcrypt pdo_mysql redis zip && \
     apt-get clean && apt-get autoclean && apt-get autoremove --purge && \
     rm -rf /var/lib/apt/lists/*
 
