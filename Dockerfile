@@ -39,10 +39,10 @@ COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 RUN mkdir /var/www/web
 
 # Code
-COPY ./code/ /var/www/
+# COPY ./code/ /var/www/
 
 # CMS requirements check script
-# COPY ./check /var/www/web/check
+COPY ./check /var/www/web/check
 
 # DB Manager Adminer
 COPY ./adminer /var/www/web/adminer
