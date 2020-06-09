@@ -42,7 +42,7 @@ RUN mkdir /var/www/web
 COPY ./code/ /var/www/
 
 # CMS requirements check script
-COPY ./check /var/www/web/check
+# COPY ./check /var/www/web/check
 
 # DB Manager Adminer
 COPY ./adminer /var/www/web/adminer
