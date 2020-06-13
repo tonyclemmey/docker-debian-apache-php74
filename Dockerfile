@@ -35,9 +35,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends apt-utils ffmpe
 COPY ./000-default.conf /etc/apache2/sites-enabled/000-default.conf
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 
-# Creat missing Apache DIR and set proper permissions
-RUN mkdir -p /var/log/apache2 && \
-    chmod 700 /var/log/apache2/
+# Remove unused other-vhosts-access-log.conf
+RUN rm -rf /etc/apache2/conf-enabled/other-vhosts-access-log.conf
+
+# Creat missing Apache DIR and set proper permissions 
+RUN mkdir -p /var/www/log/apache2 && \
+    chmod 744 /var/www/log/apache2
 
 # Webroot dir
 RUN mkdir /var/www/web
