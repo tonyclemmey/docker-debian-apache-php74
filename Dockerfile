@@ -24,29 +24,25 @@ ENV DOMAIN_URL $URL
 # Easily install PHP extension in Docker containers (https://github.com/mlocati/docker-php-extension-installer)
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
 
-# Install some stuff (ffmpeg, apache mods, php exts)
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils w3m wget nano ffmpeg && \
+# Install some stuff (ffmpeg, mariadb-client, apache mods, php extentions)
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils w3m wget nano ffmpeg mariadb-client && \
     a2enmod ssl && a2enmod rewrite && a2enmod headers && \
     install-php-extensions gd imagick intl mcrypt pdo_mysql redis zip && \
     apt-get clean && apt-get autoclean && apt-get autoremove --purge && \
     rm -rf /var/lib/apt/lists/*
 
-# Apache config & PHP ini
+# Copy over Apache config & PHP ini
 COPY ./000-default.conf /etc/apache2/sites-enabled/000-default.conf
 COPY ./php.ini /usr/local/etc/php/conf.d/php.ini
 
-# Remove unused other-vhosts-access-log.conf
-RUN rm -rf /etc/apache2/conf-enabled/other-vhosts-access-log.conf
-
-# Creat missing Apache DIR and set proper permissions 
-RUN mkdir -p /var/www/log/apache2 && \
-    chmod 744 /var/www/log/apache2
-
-# Webroot dir
-RUN mkdir /var/www/web
+# Remove other-vhosts-access-log.conf and replace webroot dir
+RUN rm -rf /etc/apache2/conf-enabled/other-vhosts-access-log.conf && \
+    mkdir -p /var/www/web && \
+    rm -rf /var/www/html
 
 # Code
-# COPY ./code/ /var/www/
+# COPY ./code/craft2 /var/www/
+COPY ./code/craft3 /var/www/
 
 # CMS requirements check script
 COPY ./check /var/www/web/check
@@ -61,9 +57,15 @@ RUN openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj \
     cp ./$DOMAIN_URL.crt /etc/ssl/certs/$DOMAIN_URL.crt && \
     cp ./$DOMAIN_URL.key /etc/ssl/certs/$DOMAIN_URL.key
 
-# Set Permissions
-RUN chown -Rf www-data:www-data /var/www && \
-    rm -rf /var/www/html
+# set permissions
+RUN chown -Rf www-data:www-data /var/www
+
+# Install composer & redis
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    composer self-update --1 && \
+    cd /var/www && \
+    composer require --prefer-dist yiisoft/yii2-redis
 
 EXPOSE 80
 EXPOSE 443
